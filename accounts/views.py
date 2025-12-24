@@ -6,8 +6,11 @@ from decimal import Decimal
 from .models import Account
 from .services import deposit
 from .services import withdraw
+from accounts.models import Customer, Account, Transaction
+from accounts.serializers import CustomerSerializer, AccountSerializer, TransactionSerializer
 
 # Create your views here.
+
 
 class DepositAPIView(APIView):
     def post(self, request):
@@ -104,3 +107,14 @@ class WithdrawAPIView(APIView):
                 {"error": "Internal server error"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+class CustomerApiView(APIView):
+    def get(self,request):
+        customer = Customer.objects.all()
+        serializer = CustomerSerializer(customer,many=True)
+        return Response(serializer.data)
+    def post(self,request):
+        serializer = CustomerSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status = status.HTTP_201_CREATED)
+        return Response(serializer.errors,status= status.HTTP_400_BAD_REQUEST)

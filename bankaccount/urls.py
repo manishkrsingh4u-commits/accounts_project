@@ -16,10 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from accounts.views import DepositAPIView, WithdrawAPIView
+from accounts.views import DepositAPIView, WithdrawAPIView,CustomerApiView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('deposit/', DepositAPIView.as_view(), name='deposit'),
     path('withdraw/', WithdrawAPIView.as_view(), name='withdraw'),
+    path('customers/', CustomerApiView.as_view(), name='customers'),
                         
 ]
