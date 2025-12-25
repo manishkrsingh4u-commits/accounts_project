@@ -8,12 +8,19 @@ class CustomerSerializer(serializers.ModelSerializer):
         model = Customer
         fields = ['id', 'full_name', 'email', 'phone_number', 'address', 'created_at', 'updated_at']
 class AccountSerializer(serializers.ModelSerializer):
+
+    customer_id = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all(),
+        source='customer',       # ⭐ THIS LINE FIXES EVERYTHING
+        write_only=True
+    )
     customer = CustomerSerializer(read_only=True)
 
     class Meta:
         model = Account
-        fields = ['id', 'customer', 'account_type', 'balance', 'created_at', 'updated_at']
+        fields = ['id', 'customer','customer_id', 'account_type', 'balance', 'created_at', 'updated_at']
 class TransactionSerializer(serializers.ModelSerializer):
+    
     account = AccountSerializer(read_only=True)
 
     class Meta:

@@ -118,3 +118,39 @@ class CustomerApiView(APIView):
             serializer.save()
             return Response(serializer.data,status = status.HTTP_201_CREATED)
         return Response(serializer.errors,status= status.HTTP_400_BAD_REQUEST)
+class AccountApiView(APIView):
+    def get(self,request):
+        account = Account.objects.all()
+        serializer = AccountSerializer(account,many=True)
+        return Response(serializer.data)
+    def post(self,request):
+        serializer = AccountSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status = status.HTTP_201_CREATED)
+        return Response(serializer.errors,status= status.HTTP_400_BAD_REQUEST)
+    
+class AccountDetailsView(APIView):
+    def get(self,request,pk):
+        try:
+            account = Account.objects.get(pk=pk)
+            serializer = AccountSerializer(account)
+            return Response(serializer.data)
+        except Account.DoesNotExist:
+            return Response(
+                {"error": "Account not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
+    def put(self,request,pk):
+        try:
+            account = Account.objects.get(pk=pk)
+            serializer = AccountSerializer(account,data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        except Account.DoesNotExist:
+            return Response(
+                {"error": "Account not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )
